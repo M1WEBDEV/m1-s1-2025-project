@@ -36,23 +36,19 @@ export class BookRepository {
   public async getBookById(id: string): Promise<BookModel | undefined> {
     const book = await this.bookRepository.findOne({
       where: { id: id as BookId },
+      relations: ['author'],
     });
 
-    if (!book) {
-      return undefined;
-    }
-
-    const author = await this.authorRepository.findOne({
-      where: { id: book.authorId },
-    });
-
-    if (!author) {
-      return undefined;
-    }
+    if (!book) return undefined;
 
     return {
-      ...book,
-      author,
+      id: book.id,
+      title: book.title,
+      yearPublished: book.yearPublished,
+      author: {
+        firstName: book.author.firstName,
+        lastName: book.author.lastName,
+      },
     };
   }
 
@@ -65,7 +61,14 @@ export class BookRepository {
       throw new Error('Author not found');
     }
 
-    return this.bookRepository.save(this.bookRepository.create(book));
+    const created = await this.bookRepository.save(
+      this.bookRepository.create(book),
+    );
+
+    // return the created book with author info
+    const result = await this.getBookById(created.id);
+    // result should exist because author exists; cast to BookModel for simplicity
+    return result as BookModel;
   }
 
   public async updateBook(
@@ -81,6 +84,8 @@ export class BookRepository {
     }
 
     await this.bookRepository.update(id, book);
+
+    return this.getBookById(id);
   }
 
   public async deleteBook(id: string): Promise<void> {

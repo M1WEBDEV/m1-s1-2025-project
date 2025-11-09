@@ -18,21 +18,21 @@ export class BookController {
 
   @Get()
   async getBooks(@Query() input: GetBooksDto): Promise<GetBooksModel> {
+    const limit = input.limit ?? 10;
+    const offset = input.offset ?? 0;
     const [property, direction] = input.sort
       ? input.sort.split(',')
       : ['title', 'ASC'];
 
     const [books, totalCount] = await this.bookService.getAllBooks({
-      ...input,
+      limit,
+      offset,
       sort: {
         [property]: direction,
       },
     });
 
-    return {
-      data: books,
-      totalCount,
-    };
+    return { data: books, totalCount };
   }
 
   @Get(':id')
