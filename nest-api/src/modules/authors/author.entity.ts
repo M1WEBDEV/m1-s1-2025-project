@@ -12,4 +12,7 @@ export class AuthorEntity extends BaseEntity {
 
   @Column({ name: 'last_name', type: 'varchar' })
   lastName: string;
+
+  @Column({ nullable: true })
+  picture?: string;
 }
