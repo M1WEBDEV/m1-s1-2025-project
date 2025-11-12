@@ -3,12 +3,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ClientEntity } from './entities/client.entity';
 import { CreateClientDto } from './create-client.dto';
+import { SaleEntity } from '../sales/entities/sale.entity';
 
 @Injectable()
 export class ClientService {
   constructor(
     @InjectRepository(ClientEntity)
     private clientsRepository: Repository<ClientEntity>,
+
+    @InjectRepository(SaleEntity)
+    private readonly saleRepo: Repository<SaleEntity>,
   ) {}
 
   async create(createClientDto: CreateClientDto): Promise<ClientEntity> {
@@ -38,5 +42,12 @@ export class ClientService {
 
   async remove(id: string): Promise<void> {
     await this.clientsRepository.delete(+id);
+  }
+
+  async findBooksBoughtByClient(clientId: number) {
+    return this.saleRepo.find({
+      where: { clientId },
+      relations: ['book', 'book.author'],
+    });
   }
 }

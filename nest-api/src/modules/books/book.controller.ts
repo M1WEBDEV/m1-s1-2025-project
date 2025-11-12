@@ -35,6 +35,12 @@ export class BookController {
     return { data: books, totalCount };
   }
 
+  // IMPORTANT: This must come BEFORE @Get(':id') to avoid route conflicts
+  @Get('with-client-count')
+  getBooksWithClientCount() {
+    return this.bookService.getBookWithClientCount();
+  }
+
   @Get(':id')
   public async getBook(@Param('id') id: string) {
     return this.bookService.getBookById(id);

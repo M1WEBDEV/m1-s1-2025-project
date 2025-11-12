@@ -1,5 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { AuthorModel, CreateAuthorModel, AuthorWithStats } from './author.model';
+import {
+  AuthorModel,
+  CreateAuthorModel,
+  AuthorWithStats,
+} from './author.model';
 import { AuthorRepository } from './author.repository';
 
 @Injectable()
@@ -20,7 +24,10 @@ export class AuthorService {
     return author;
   }
 
-  public async updateAuthor(id: string, patch: Partial<CreateAuthorModel>): Promise<AuthorModel> {
+  public async updateAuthor(
+    id: string,
+    patch: Partial<CreateAuthorModel>,
+  ): Promise<AuthorModel> {
     const updated = await this.authorRepository.updateAuthor(id, patch);
     if (!updated) throw new NotFoundException(`Author with ID ${id} not found`);
     return updated;

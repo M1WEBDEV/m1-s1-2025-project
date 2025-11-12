@@ -5,6 +5,10 @@ export class CreateBookDto {
   @IsString()
   title: string;
 
+  @IsOptional()
+  @IsString()
+  picture?: string;
+
   @IsUUID(4)
   authorId: AuthorId;
 
@@ -15,34 +19,38 @@ export class CreateBookDto {
 }
 
 export class UpdateBookDto {
+  @IsOptional()
   @IsString()
-  @IsOptional()
-  title: string;
+  title?: string;
 
+  @IsOptional()
+  @IsString()
+  picture?: string;
+
+  @IsOptional()
   @IsUUID(4)
-  @IsOptional()
-  authorId: AuthorId;
+  authorId?: AuthorId;
 
+  @IsOptional()
   @IsInt()
   @Min(1500)
   @Max(2025)
-  @IsOptional()
-  yearPublished: number;
+  yearPublished?: number;
 }
 
 export class GetBooksDto {
+  @IsOptional()
   @IsInt()
   @Min(1)
   @Max(100)
-  @IsOptional()
   limit?: number;
 
+  @IsOptional()
   @IsInt()
   @Min(0)
-  @IsOptional()
   offset?: number;
 
-  @IsString()
   @IsOptional()
+  @IsString()
   sort?: string;
 }

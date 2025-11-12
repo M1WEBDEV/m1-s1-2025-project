@@ -29,6 +29,11 @@ export class ClientController {
     return this.clientService.findOne(id);
   }
 
+  @Get(':id/books')
+  getBooksBought(@Param('id') id: string) {
+    return this.clientService.findBooksBoughtByClient(Number(id));
+  }
+
   @Put(':id')
   update(@Param('id') id: string, @Body() updateClientDto: CreateClientDto) {
     return this.clientService.update(id, updateClientDto);
