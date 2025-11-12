@@ -4,6 +4,7 @@ import { DataSource, Repository } from 'typeorm';
 import { AuthorEntity } from '../authors/author.entity';
 import {
   BookModel,
+  BookWithClientCountModel,
   CreateBookModel,
   FilterBooksModel,
   UpdateBookModel,
@@ -45,11 +46,58 @@ export class BookRepository {
       id: book.id,
       title: book.title,
       yearPublished: book.yearPublished,
+      picture: book.picture,
       author: {
         firstName: book.author.firstName,
         lastName: book.author.lastName,
       },
     };
+  }
+
+  public async getBooksWithClientCount(): Promise<BookWithClientCountModel[]> {
+    const books = await this.bookRepository
+      .createQueryBuilder('book')
+      .leftJoin('book.author', 'author')
+      .leftJoin('sales', 'sale', 'sale.bookId = book.id')
+      .select([
+        'book.id',
+        'book.title',
+        'book.yearPublished',
+        'book.picture',
+        'author.firstName',
+        'author.lastName',
+      ])
+      .addSelect('COUNT(DISTINCT sale.clientId)', 'clientCount')
+      .groupBy('book.id')
+      .addGroupBy('author.id')
+      .getRawAndEntities();
+
+    const rawResults = books.raw as Array<{
+      clientCount?: string | number | null;
+    }>;
+
+    return books.entities.map((book, index) => {
+      const raw = rawResults[index];
+      const countValue = raw?.clientCount;
+      const clientCount =
+        typeof countValue === 'string'
+          ? parseInt(countValue, 10) || 0
+          : typeof countValue === 'number'
+            ? Math.floor(countValue)
+            : 0;
+
+      return {
+        id: book.id,
+        title: book.title,
+        yearPublished: book.yearPublished,
+        picture: book.picture,
+        author: {
+          firstName: book.author.firstName,
+          lastName: book.author.lastName,
+        },
+        clientCount,
+      };
+    });
   }
 
   public async createBook(book: CreateBookModel): Promise<BookModel> {
@@ -65,9 +113,8 @@ export class BookRepository {
       this.bookRepository.create(book),
     );
 
-    // return the created book with author info
     const result = await this.getBookById(created.id);
-    // result should exist because author exists; cast to BookModel for simplicity
+
     return result as BookModel;
   }
 

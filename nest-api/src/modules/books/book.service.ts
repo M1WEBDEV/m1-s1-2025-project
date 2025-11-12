@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import {
   BookModel,
+  BookWithClientCountModel,
   CreateBookModel,
   FilterBooksModel,
   UpdateBookModel,
@@ -19,6 +20,10 @@ export class BookService {
 
   public async getBookById(id: string): Promise<BookModel | undefined> {
     return this.bookRepository.getBookById(id);
+  }
+
+  public async getBookWithClientCount(): Promise<BookWithClientCountModel[]> {
+    return this.bookRepository.getBooksWithClientCount();
   }
 
   public async createBook(book: CreateBookModel): Promise<BookModel> {

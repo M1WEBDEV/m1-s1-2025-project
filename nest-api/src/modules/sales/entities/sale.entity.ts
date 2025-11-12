@@ -13,13 +13,13 @@ export class SaleEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => ClientEntity)
+  @ManyToOne(() => ClientEntity, { onDelete: 'CASCADE' })
   client: ClientEntity;
 
   @Column()
   clientId: number;
 
-  @ManyToOne(() => BookEntity)
+  @ManyToOne(() => BookEntity, { onDelete: 'CASCADE' })
   book: BookEntity;
 
   @Column()
