@@ -1,12 +1,6 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { BookDetails } from '../books/components/BookDetails'
+import { createFileRoute } from "@tanstack/react-router";
+import { BookDetailsPage } from "../books/pages/BookDetailsPage";
 
-export const Route = createFileRoute('/books/$bookId')({
+export const Route = createFileRoute("/books/$bookId")({
   component: BookDetailsPage,
-})
-
-function BookDetailsPage() {
-  const { bookId } = Route.useParams()
-
-  return <BookDetails id={bookId} />
-}
+});

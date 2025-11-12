@@ -1,95 +1,70 @@
-import { useState } from 'react'
-import type { BookModel, UpdateBookModel } from '../BookModel'
-import { Button, Col, Row } from 'antd'
-import {
-  CheckOutlined,
-  CloseOutlined,
-  DeleteOutlined,
-  EditOutlined,
-} from '@ant-design/icons'
-import { Link } from '@tanstack/react-router'
+import { Button, Card, Space, Typography } from "antd";
+import { DeleteOutlined, EditOutlined, EyeOutlined } from "@ant-design/icons";
+import type { BookModel } from "../BookModel";
+import { AvatarImg } from "../../shared/ui/AvatarImg";
+import { Link } from "@tanstack/react-router";
 
 interface BookListItemProps {
-  book: BookModel
-  onDelete: (id: string) => void
-  onUpdate: (id: string, input: UpdateBookModel) => void
+  book: BookModel;
+  onEdit: (book: BookModel) => void;
+  onDelete: (id: string) => void;
 }
 
-export function BookListItem({ book, onDelete, onUpdate }: BookListItemProps) {
-  const [title, setTitle] = useState(book.title)
-  const [isEditing, setIsEditing] = useState(false)
-
-  const onCancelEdit = () => {
-    setIsEditing(false)
-    setTitle(book.title)
-  }
-
-  const onValidateEdit = () => {
-    onUpdate(book.id, { title })
-    setIsEditing(false)
-  }
+export const BookListItem = ({ book, onEdit, onDelete }: BookListItemProps) => {
+  const authorName =
+    book.author.fullName ?? `${book.author.firstName} ${book.author.lastName}`.trim();
 
   return (
-    <Row
-      style={{
-        width: '100%',
-        height: '50px',
-        borderRadius: '10px',
-        backgroundColor: '#EEEEEE',
-        margin: '1rem 0',
-        padding: '.25rem',
-        display: 'flex',
-        justifyContent: 'space-between',
-      }}
+    <Card
+      hoverable
+      style={{ marginBottom: 16 }}
+      actions={[
+        <Link
+          key="view"
+          to="/books/$bookId"
+          params={{ bookId: book.id }}
+          style={{ display: "inline-flex", alignItems: "center", gap: 4 }}
+        >
+          <EyeOutlined /> View
+        </Link>,
+        <Button
+          key="edit"
+          type="link"
+          icon={<EditOutlined />}
+          onClick={() => onEdit(book)}
+        >
+          Edit
+        </Button>,
+        <Button
+          key="delete"
+          type="link"
+          danger
+          icon={<DeleteOutlined />}
+          onClick={() => onDelete(book.id)}
+        >
+          Delete
+        </Button>,
+      ]}
     >
-      <Col span={12} style={{ margin: 'auto 0' }}>
-        {isEditing ? (
-          <input value={title} onChange={e => setTitle(e.target.value)} />
-        ) : (
-          <Link
-            to={`/books/$bookId`}
-            params={{ bookId: book.id }}
-            style={{
-              margin: 'auto 0',
-              textAlign: 'left',
-            }}
-          >
-            <span style={{ fontWeight: 'bold' }}>{book.title}</span> -{' '}
-            {book.yearPublished}
-          </Link>
-        )}
-      </Col>
-      <Col span={9} style={{ margin: 'auto 0' }}>
-        by <span style={{ fontWeight: 'bold' }}>{book.author.firstName}</span>{' '}
-        <span style={{ fontWeight: 'bold' }}>{book.author.lastName}</span>
-      </Col>
-      <Col
-        span={3}
-        style={{
-          alignItems: 'right',
-          display: 'flex',
-          gap: '.25rem',
-          margin: 'auto 0',
-        }}
-      >
-        {isEditing ? (
-          <>
-            <Button type="primary" onClick={onValidateEdit}>
-              <CheckOutlined />
-            </Button>
-            <Button onClick={onCancelEdit}>
-              <CloseOutlined />
-            </Button>
-          </>
-        ) : (
-          <Button type="primary" onClick={() => setIsEditing(true)}>
-            <EditOutlined />
-          </Button>
-        )}
-        <Button type="primary" danger onClick={() => onDelete(book.id)}>
-          <DeleteOutlined />
-        </Button>
-      </Col>
-    </Row>
-  )
-}
+      <Space align="start" size="large">
+        <AvatarImg name={book.title} src={book.pictureUrl} size={72} />
+        <Space direction="vertical" size={4}>
+          <Typography.Title level={4} style={{ margin: 0 }}>
+            {book.title}
+          </Typography.Title>
+          <Typography.Text>
+            {authorName} • {book.yearPublished}
+          </Typography.Text>
+          {book.description && (
+            <Typography.Paragraph type="secondary" ellipsis={{ rows: 2 }}>
+              {book.description}
+            </Typography.Paragraph>
+          )}
+          <Typography.Text type="secondary">
+            Sales: {book.salesCount ?? 0}
+          </Typography.Text>
+        </Space>
+      </Space>
+    </Card>
+  );
+};

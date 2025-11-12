@@ -1,57 +1,139 @@
-import { Breadcrumb, Card, Avatar, Spin } from "antd";
-import { Link, useParams } from "@tanstack/react-router";
+import { useState } from "react";
+import {
+  Button,
+  Card,
+  Descriptions,
+  Modal,
+  Space,
+  Spin,
+  Statistic,
+  Typography,
+} from "antd";
+import { useNavigate, useParams } from "@tanstack/react-router";
 import { useAuthorDetailsProvider } from "../providers/useAuthorDetailsProvider";
+import { Breadcrumbs } from "../../shared/ui/Breadcrumbs";
+import { AvatarImg } from "../../shared/ui/AvatarImg";
+import { Route as authorsRoute } from "../../routes/authors/index";
+import { useAuthorsProvider } from "../providers/useAuthorsProvider";
+import { CreateAuthorModal } from "../components/CreateAuthorModal";
 
 export function AuthorDetailsPage() {
-  // match route file: src/routes/authors/authors.$authorId.tsx
-  const params = useParams({ from: "/authors/authors/$authorId" });
-  const { authorId } = params;
-
-  const { author, loading } = useAuthorDetailsProvider(authorId);
+  const { authorId } = useParams({ from: "/authors/authors/$authorId" });
+  const { author, loading, refresh } = useAuthorDetailsProvider(authorId);
+  const { updateAuthor, deleteAuthor } = useAuthorsProvider();
+  const [isEditing, setIsEditing] = useState(false);
+  const navigate = useNavigate();
 
   if (loading) {
     return (
-      <div style={{ padding: 24 }}>
-        <Spin />
-      </div>
+      <Space
+        direction="vertical"
+        style={{ padding: 64, width: "100%", alignItems: "center" }}
+      >
+        <Spin size="large" />
+        <Typography.Text type="secondary">Loading author…</Typography.Text>
+      </Space>
     );
   }
 
   if (!author) {
     return (
       <div style={{ padding: 24 }}>
-        <p>Author not found.</p>
+        <Typography.Text type="danger">Author not found.</Typography.Text>
       </div>
     );
   }
 
+  const handleDelete = () => {
+    Modal.confirm({
+      title: `Delete ${author.name}?`,
+      content: "This will remove the author and related books.",
+      okText: "Delete",
+      okButtonProps: { danger: true },
+      onOk: async () => {
+        await deleteAuthor(String(author.id));
+        navigate({ to: authorsRoute.to });
+      },
+    });
+  };
+
+  const handleEdit = async (values: { name: string; pictureUrl?: string }) => {
+    await updateAuthor(String(author.id), values);
+    await refresh();
+    setIsEditing(false);
+  };
+
   return (
-    <div style={{ padding: 24 }}>
-      <Breadcrumb style={{ marginBottom: 16 }}>
-        <Breadcrumb.Item>
-          <Link to="/">Home</Link>
-        </Breadcrumb.Item>
-        <Breadcrumb.Item>
-          <Link to="/authors">Authors</Link>
-        </Breadcrumb.Item>
-        <Breadcrumb.Item>{author.name}</Breadcrumb.Item>
-      </Breadcrumb>
+    <Space direction="vertical" style={{ width: "100%", padding: 24 }} size="large">
+      <Breadcrumbs
+        items={[
+          { label: "Authors", to: authorsRoute.to },
+          { label: author.name },
+        ]}
+      />
 
       <Card>
-        <Card.Meta
-          avatar={
-            <Avatar
-              size={64}
-              src={author.pictureUrl}
-              style={{ backgroundColor: "#ccc" }}
-            >
-              {author.name[0]}
-            </Avatar>
-          }
-          title={author.name}
-          description={author.pictureUrl || "No picture URL"}
-        />
+        <Space
+          align="start"
+          style={{ width: "100%", justifyContent: "space-between" }}
+          size="large"
+        >
+          <Space size="large">
+            <AvatarImg name={author.name} src={author.pictureUrl} size={112} />
+            <Space direction="vertical" size="small">
+              <Typography.Title level={2} style={{ marginBottom: 0 }}>
+                {author.name}
+              </Typography.Title>
+              <Typography.Text type="secondary">
+                Books authored: {author.booksCount}
+              </Typography.Text>
+              <Typography.Text type="secondary">
+                Avg sales per book: {author.averageSales.toFixed(1)}
+              </Typography.Text>
+            </Space>
+          </Space>
+          <Space>
+            <Button onClick={() => setIsEditing(true)}>Edit</Button>
+            <Button danger onClick={handleDelete}>
+              Delete
+            </Button>
+          </Space>
+        </Space>
       </Card>
-    </div>
+
+      <Card title="Performance">
+        <Space size="large">
+          <Statistic title="Books published" value={author.booksCount} />
+          <Statistic
+            title="Average sales per book"
+            value={author.averageSales}
+            precision={1}
+          />
+        </Space>
+      </Card>
+
+      <Card title="Profile">
+        <Descriptions column={1} bordered>
+          <Descriptions.Item label="Name">{author.name}</Descriptions.Item>
+          <Descriptions.Item label="Avatar URL">
+            {author.pictureUrl ? (
+              <a href={author.pictureUrl} target="_blank" rel="noreferrer">
+                {author.pictureUrl}
+              </a>
+            ) : (
+              "No image available"
+            )}
+          </Descriptions.Item>
+        </Descriptions>
+      </Card>
+
+      <CreateAuthorModal
+        open={isEditing}
+        onClose={() => setIsEditing(false)}
+        onSubmit={handleEdit}
+        initialValue={author}
+      />
+    </Space>
   );
 }
+
