@@ -41,9 +41,17 @@ export const ClientsProvider = ({ children }: { children: React.ReactNode }) => 
     setLoading(true);
     setError(null);
     try {
-      const response = await http.get<ClientModel[] | { data: ClientModel[] }>("/clients");
+      // use endpoint that returns clients with book counts
+      const response = await http.get<ClientModel[] | { data: ClientModel[] }>(
+        "/clients/with-client-count",
+      );
       const list = Array.isArray(response) ? response : response?.data ?? [];
-      setClients(list.map(normaliseClient));
+      // map server property (booksCount) to salesCount expected by UI
+      const mapped = list.map((c: any) => ({
+        ...c,
+        salesCount: c.booksCount ?? c.salesCount ?? 0,
+      }));
+      setClients(mapped.map(normaliseClient));
     } catch (err) {
       const messageText =
         err instanceof Error ? err.message : "Failed to load clients";
