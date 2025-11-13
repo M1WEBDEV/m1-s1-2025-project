@@ -1,7 +1,7 @@
-// Import the book icon image from assets/images folder
-// The book icon is located at: react-app/src/assets/images/book-icon.png
-// Supported formats: .png, .svg, .jpg, .jpeg, .webp
-// If you use a different format, update the import below (e.g., book-icon.svg)
+
+
+
+
 import bookIconImage from "../../assets/images/book-icon.png";
 
 interface BookIconProps {

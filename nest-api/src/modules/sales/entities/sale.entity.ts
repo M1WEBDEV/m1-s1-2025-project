@@ -27,7 +27,7 @@ export class SaleEntity {
   @Column({ default: 1 })
   quantity: number;
 
-  // allow saleDate to be set by the client; default to CURRENT_TIMESTAMP when not provided
+  
   @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
   saleDate: Date;
 }

@@ -81,7 +81,7 @@ function About() {
 
   return (
     <div style={{ background: "#ffffff", minHeight: "100vh" }}>
-      {/* Hero Section */}
+      {}
       <section
         style={{
           background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",

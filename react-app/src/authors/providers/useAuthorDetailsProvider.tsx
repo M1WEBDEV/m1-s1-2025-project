@@ -16,13 +16,42 @@ export function useAuthorDetailsProvider(authorId: string): UseAuthorDetailsResu
   const fetchAuthor = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await http.get<AuthorWithStats | { data: AuthorWithStats }>(
+      type ServerAuthor = {
+        id: string;
+        name?: string;
+        firstName?: string;
+        lastName?: string;
+        picture?: string | null;
+        booksCount?: number;
+        averageSales?: number;
+        books?: Array<{
+          id: string;
+          title: string;
+          yearPublished: number;
+          picture?: string | null;
+        }>;
+      };
+
+      const response = await http.get<ServerAuthor | { data: ServerAuthor }>(
         `/authors/${authorId}`,
       );
-      const data = (response as { data?: AuthorWithStats })?.data ?? (response as AuthorWithStats);
+      const data = (response as { data?: ServerAuthor })?.data ?? (response as ServerAuthor);
+
+      const name = data.name ?? `${data.firstName ?? ""} ${data.lastName ?? ""}`.trim();
+      const books = (data.books ?? []).map((b) => ({
+        id: String(b.id),
+        title: b.title,
+        yearPublished: Number(b.yearPublished),
+        pictureUrl: b.picture ?? undefined,
+      }));
+
       setAuthor({
-        ...data,
-        averageSales: data.averageSales ?? 0,
+        id: String(data.id),
+        name,
+        pictureUrl: data.picture ?? undefined,
+        booksCount: Number(data.booksCount ?? 0),
+        averageSales: Number(data.averageSales ?? 0),
+        books,
       });
     } catch (err) {
       const messageText = err instanceof Error ? err.message : "Failed to load author";

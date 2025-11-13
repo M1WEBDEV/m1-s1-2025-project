@@ -48,7 +48,7 @@ export const useBookProvider = () => {
     setLoading(true);
     setError(null);
     try {
-      // request books with client counts from the backend
+      
       const response = await http.get<BookResponse[] | { data: BookResponse[] }>(
         "/books/with-client-count",
       );

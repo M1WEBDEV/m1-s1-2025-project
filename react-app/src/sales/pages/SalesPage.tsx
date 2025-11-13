@@ -137,7 +137,7 @@ export const SalesPage = () => {
 
   return (
     <div style={{ background: "#fafafa", minHeight: "100vh" }}>
-      {/* Hero Section */}
+      {}
       <div
         style={{
           background: "linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)",
@@ -168,7 +168,7 @@ export const SalesPage = () => {
         </div>
       </div>
 
-      {/* Content Section */}
+      {}
       <div style={{ padding: "40px 24px", maxWidth: 1200, margin: "0 auto" }}>
         <Space direction="vertical" style={{ width: "100%" }} size="large">
           <Card

@@ -127,6 +127,27 @@ export function AuthorDetailsPage() {
         </Descriptions>
       </Card>
 
+      <Card title="Books by this author">
+        {author.books && author.books.length > 0 ? (
+          <ul style={{ margin: 0, paddingLeft: 18 }}>
+            {author.books.map((b) => (
+              <li key={b.id} style={{ marginBottom: 8 }}>
+                <a
+                  onClick={() =>
+                    navigate({ to: "/books/$bookId", params: { bookId: String(b.id) } })
+                  }
+                  style={{ cursor: "pointer" }}
+                >
+                  {b.title} ({b.yearPublished})
+                </a>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <Typography.Text type="secondary">No books for this author yet.</Typography.Text>
+        )}
+      </Card>
+
       <CreateAuthorModal
         open={isEditing}
         onClose={() => setIsEditing(false)}

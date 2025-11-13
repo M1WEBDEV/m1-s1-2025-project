@@ -41,16 +41,32 @@ export const ClientsProvider = ({ children }: { children: React.ReactNode }) => 
     setLoading(true);
     setError(null);
     try {
-      // use endpoint that returns clients with book counts
-      const response = await http.get<ClientModel[] | { data: ClientModel[] }>(
+      
+      type ServerClient = {
+        id: number | string;
+        firstName: string;
+        lastName: string;
+        email?: string;
+        picture?: string;
+        pictureUrl?: string;
+        booksCount?: number;
+        salesCount?: number;
+      };
+
+      const response = await http.get<ServerClient[] | { data: ServerClient[] }>(
         "/clients/with-client-count",
       );
       const list = Array.isArray(response) ? response : response?.data ?? [];
-      // map server property (booksCount) to salesCount expected by UI
-      const mapped = list.map((c: any) => ({
-        ...c,
+
+      const mapped = list.map((c: ServerClient) => ({
+        id: String(c.id),
+        firstName: c.firstName,
+        lastName: c.lastName,
+        email: c.email,
+        pictureUrl: c.picture ?? c.pictureUrl,
         salesCount: c.booksCount ?? c.salesCount ?? 0,
       }));
+
       setClients(mapped.map(normaliseClient));
     } catch (err) {
       const messageText =

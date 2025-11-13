@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { AuthorModel, CreateAuthorModel, AuthorWithStats } from './author.model';
+import { AuthorModel, CreateAuthorModel, AuthorWithStats, AuthorWithBooks } from './author.model';
 import { AuthorEntity, AuthorId } from './author.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
@@ -12,11 +12,11 @@ export class AuthorRepository {
     private readonly dataSource: DataSource,
   ) {}
 
-  /**
-   * Returns authors with aggregated stats: booksCount and averageSales
-   */
+  
+
+
   public async getAllAuthors(): Promise<AuthorWithStats[]> {
-    // Use a query builder with subquery counting sales per book, then aggregate per author
+    
     const sub = this.dataSource
       .createQueryBuilder()
       .select('s.bookId', 'bookId')
@@ -48,7 +48,7 @@ export class AuthorRepository {
     }));
   }
 
-  public async getAuthorById(id: string): Promise<AuthorWithStats | null> {
+  public async getAuthorById(id: string): Promise<AuthorWithBooks | null> {
     const sub = this.dataSource
       .createQueryBuilder()
       .select('s.bookId', 'bookId')
@@ -72,6 +72,24 @@ export class AuthorRepository {
 
     const r = await qb.getRawOne();
     if (!r) return null;
+    
+    const rawBooks = await this.dataSource
+      .createQueryBuilder()
+      .select('b.id', 'id')
+      .addSelect('b.title', 'title')
+      .addSelect('b.year_published', 'yearPublished')
+      .addSelect('b.picture', 'picture')
+      .from('books', 'b')
+      .where('b.author_id = :id', { id })
+      .getRawMany();
+
+    const books = rawBooks.map((bk: Record<string, unknown>) => ({
+      id: String(bk['id']),
+      title: String(bk['title'] ?? ''),
+      yearPublished: Number(bk['yearPublished'] ?? bk['year_published'] ?? 0),
+      picture: (bk['picture'] as string) ?? null,
+    }));
+
     return {
       id: r.id,
       firstName: r.firstName ?? r.first_name,
@@ -79,6 +97,7 @@ export class AuthorRepository {
       picture: r.picture ?? null,
       booksCount: Number(r.booksCount ?? 0),
       averageSales: Number(r.averageSales ?? 0),
+      books,
     };
   }
 

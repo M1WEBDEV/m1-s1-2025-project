@@ -28,7 +28,7 @@ export function Layout({ children }: LayoutProps) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Scroll to top on route change
+  
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
   }, [location.pathname]);
@@ -56,7 +56,7 @@ export function Layout({ children }: LayoutProps) {
 
   return (
     <div style={{ minHeight: "100vh", background: "#fafafa" }}>
-      {/* Sticky Navigation */}
+      {}
       <nav
         style={{
           position: "sticky",
@@ -85,7 +85,7 @@ export function Layout({ children }: LayoutProps) {
             height: 64,
           }}
         >
-          {/* Logo */}
+          {}
           <Link
             to={indexRoute.to}
             style={{
