@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { ClientEntity } from './entities/client.entity';
 import { CreateClientDto } from './create-client.dto';
 import { SaleEntity } from '../sales/entities/sale.entity';
+import { ClientModel } from './models/client.model';
 
 @Injectable()
 export class ClientService {
@@ -49,5 +50,30 @@ export class ClientService {
       where: { clientId },
       relations: ['book', 'book.author'],
     });
+  }
+
+  async getClientsWithBookCount(): Promise<Array<ClientModel & { booksCount: number }>> {
+    const clients = await this.clientsRepository.find();
+
+    const rawCounts = await this.saleRepo
+      .createQueryBuilder('s')
+      .select('s.clientId', 'clientId')
+      .addSelect('COUNT(DISTINCT s.bookId)', 'booksCount')
+      .groupBy('s.clientId')
+      .getRawMany();
+
+    const map = new Map<number, number>();
+    rawCounts.forEach((r) => {
+      map.set(Number(r.clientId), Number(r.booksCount));
+    });
+
+    return clients.map((c) => ({
+      id: c.id,
+      firstName: c.firstName,
+      lastName: c.lastName,
+      email: c.email,
+      picture: c.picture,
+      booksCount: map.get(c.id) ?? 0,
+    }));
   }
 }

@@ -3,7 +3,6 @@ import {
   PrimaryGeneratedColumn,
   Column,
   ManyToOne,
-  CreateDateColumn,
 } from 'typeorm';
 import { ClientEntity } from '../../clients/entities/client.entity';
 import { BookEntity } from '../../books/entities/book.entity';
@@ -28,6 +27,7 @@ export class SaleEntity {
   @Column({ default: 1 })
   quantity: number;
 
-  @CreateDateColumn()
+  // allow saleDate to be set by the client; default to CURRENT_TIMESTAMP when not provided
+  @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
   saleDate: Date;
 }

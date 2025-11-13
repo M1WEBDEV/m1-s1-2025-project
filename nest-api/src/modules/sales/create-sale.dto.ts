@@ -1,4 +1,4 @@
-import { IsNumber, IsPositive, IsString, Min } from 'class-validator';
+import { IsNumber, IsPositive, IsString, Min, IsOptional, IsDateString } from 'class-validator';
 
 export class CreateSaleDto {
   @IsNumber()
@@ -11,4 +11,8 @@ export class CreateSaleDto {
   @IsPositive()
   @Min(1)
   quantity: number;
+
+  @IsOptional()
+  @IsDateString()
+  saleDate?: string;
 }
