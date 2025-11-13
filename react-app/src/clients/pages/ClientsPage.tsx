@@ -122,7 +122,7 @@ export const ClientsPage = () => {
 
   return (
     <div style={{ background: "#fafafa", minHeight: "100vh" }}>
-      {/* Hero Section */}
+      {}
       <div
         style={{
           background: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
@@ -153,7 +153,7 @@ export const ClientsPage = () => {
         </div>
       </div>
 
-      {/* Content Section */}
+      {}
       <div style={{ padding: "40px 24px", maxWidth: 1200, margin: "0 auto" }}>
         <Card
           style={{

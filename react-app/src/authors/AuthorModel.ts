@@ -1,5 +1,5 @@
 export interface Author {
-  id: number;
+  id: string;
   name: string;
   pictureUrl?: string;
 }
@@ -17,4 +17,5 @@ export interface UpdateAuthor {
 export interface AuthorWithStats extends Author {
   booksCount: number;
   averageSales: number;
+  books?: { id: string; title: string; yearPublished: number; pictureUrl?: string }[];
 }

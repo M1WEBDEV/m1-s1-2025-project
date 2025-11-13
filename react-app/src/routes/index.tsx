@@ -32,7 +32,7 @@ import { BookIcon } from "../shared/ui/BookIcon";
 
 const { Title, Paragraph } = Typography;
 
-// Slide images - using high-quality colorful book images
+
 const slides = [
   {
     image: "https://images.pexels.com/photos/3760323/pexels-photo-3760323.jpeg",
@@ -73,7 +73,7 @@ function Home() {
     setCurrentSlide(current);
   };
 
-  // Featured books carousel data - 10 books with HD images
+  
   const featuredBooks = [
     {
       image: "https://images.pexels.com/photos/3760323/pexels-photo-3760323.jpeg?auto=compress&cs=tinysrgb&w=1200",
@@ -202,7 +202,7 @@ function Home() {
 
   return (
     <div style={{ background: "#ffffff", minHeight: "100vh" }}>
-      {/* Hero Section with Slideshow */}
+      {}
       <section
         style={{
           position: "relative",
@@ -211,7 +211,7 @@ function Home() {
           overflow: "hidden",
         }}
       >
-        {/* Previous Arrow Button */}
+        {}
         {currentSlide > 0 && (
           <Button
             type="text"
@@ -239,7 +239,7 @@ function Home() {
           />
         )}
 
-        {/* Next Arrow Button */}
+        {}
         {currentSlide < slides.length - 1 && (
           <Button
             type="text"
@@ -294,7 +294,7 @@ function Home() {
                   backgroundRepeat: "no-repeat",
                 }}
               >
-                {/* Subtle overlay for better text readability */}
+                {}
                 <div
                   style={{
                     position: "absolute",
@@ -306,7 +306,7 @@ function Home() {
                       "linear-gradient(135deg, rgba(102, 126, 234, 0.3) 0%, rgba(118, 75, 162, 0.3) 100%)",
                   }}
                 />
-                {/* Content */}
+                {}
                 <div
                   style={{
                     position: "absolute",
@@ -399,7 +399,7 @@ function Home() {
         </Carousel>
       </section>
 
-      {/* Quick Links Section */}
+      {}
       <section style={{ padding: "80px 24px", background: "#fafafa" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: 64 }}>
@@ -500,7 +500,7 @@ function Home() {
         </div>
       </section>
 
-      {/* Features Section */}
+      {}
       <section style={{ padding: "80px 24px", background: "#ffffff" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <Row gutter={[48, 48]} align="middle">
@@ -578,7 +578,7 @@ function Home() {
                           backgroundRepeat: "no-repeat",
                         }}
                       >
-                        {/* Overlay */}
+                        {}
                         <div
                           style={{
                             position: "absolute",
@@ -590,7 +590,7 @@ function Home() {
                               "linear-gradient(135deg, rgba(102, 126, 234, 0.85) 0%, rgba(118, 75, 162, 0.85) 100%)",
                           }}
                         />
-                        {/* Content */}
+                        {}
                         <div
                           style={{
                             position: "absolute",
@@ -675,7 +675,7 @@ function Home() {
         </div>
       </section>
 
-      {/* Stats Preview */}
+      {}
       <section style={{ padding: "80px 24px", background: "#fafafa" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <Row gutter={[32, 32]}>
@@ -747,7 +747,7 @@ function Home() {
         </div>
       </section>
 
-      {/* Footer */}
+      {}
       <footer
         style={{
           background: "#1a1a1a",
@@ -757,7 +757,7 @@ function Home() {
       >
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <Row gutter={[48, 32]}>
-            {/* Library Section */}
+            {}
             <Col xs={24} sm={12} md={6}>
               <div style={{ marginBottom: 24 }}>
                 <BookIcon size={40} style={{ marginBottom: 16 }} />

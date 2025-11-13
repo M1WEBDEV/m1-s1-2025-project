@@ -6,7 +6,7 @@ import { Route as booksRoute } from "../../routes/books";
 export function BooksPage() {
   return (
     <div style={{ background: "#fafafa", minHeight: "100vh" }}>
-      {/* Hero Section */}
+      {}
       <div
         style={{
           background: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
@@ -37,7 +37,7 @@ export function BooksPage() {
         </div>
       </div>
 
-      {/* Content Section */}
+      {}
       <div style={{ padding: "40px 24px", maxWidth: 1200, margin: "0 auto" }}>
         <BookList />
       </div>

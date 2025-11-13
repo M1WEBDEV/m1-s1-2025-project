@@ -7,6 +7,7 @@ import {
   Patch,
   Post,
   Query,
+  NotFoundException,
 } from '@nestjs/common';
 import { CreateBookDto, GetBooksDto, UpdateBookDto } from './book.dto';
 import { GetBooksModel } from './book.model';
@@ -35,7 +36,7 @@ export class BookController {
     return { data: books, totalCount };
   }
 
-  // IMPORTANT: This must come BEFORE @Get(':id') to avoid route conflicts
+  
   @Get('with-client-count')
   getBooksWithClientCount() {
     return this.bookService.getBookWithClientCount();
@@ -43,7 +44,11 @@ export class BookController {
 
   @Get(':id')
   public async getBook(@Param('id') id: string) {
-    return this.bookService.getBookById(id);
+    const book = await this.bookService.getBookById(id);
+    if (!book) {
+      throw new NotFoundException(`Book with ID ${id} not found`);
+    }
+    return book;
   }
 
   @Post()

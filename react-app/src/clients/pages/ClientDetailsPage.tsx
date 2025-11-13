@@ -93,7 +93,22 @@ export const ClientDetailsPage = () => {
       title: "Book",
       dataIndex: ["book", "title"],
       key: "book",
-      render: (_val, record) => record.book?.title ?? "Unknown book",
+      render: (_val, record) => {
+        const title = record.book?.title ?? "Unknown book";
+        const bookId = record.book?.id;
+        return bookId ? (
+          <Typography.Link
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate({ to: "/books/$bookId", params: { bookId } });
+            }}
+          >
+            {title}
+          </Typography.Link>
+        ) : (
+          title
+        );
+      },
     },
     {
       title: "Author",

@@ -122,7 +122,7 @@ export function AuthorsPage() {
 
   return (
     <div style={{ background: "#fafafa", minHeight: "100vh" }}>
-      {/* Hero Section */}
+      {}
       <div
         style={{
           background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
@@ -153,7 +153,7 @@ export function AuthorsPage() {
         </div>
       </div>
 
-      {/* Content Section */}
+      {}
       <div style={{ padding: "40px 24px", maxWidth: 1200, margin: "0 auto" }}>
         <Card
           style={{

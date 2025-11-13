@@ -5,7 +5,7 @@ const DEFAULT_API = "http://localhost:3000";
 const ensureApiUrl = () => {
   const url = API_URL ?? DEFAULT_API;
   if (!API_URL) {
-    // eslint-disable-next-line no-console
+    
     console.warn(
       `VITE_API_URL not set — defaulting to ${DEFAULT_API}. Set VITE_API_URL to change this.`,
     );

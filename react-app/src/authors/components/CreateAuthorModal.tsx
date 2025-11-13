@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Modal, Form, Input, Radio, Upload, message, Button } from "antd";
+import type { RadioChangeEvent } from "antd";
 import type { UploadFile, UploadProps } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import type { Author } from "../AuthorModel";
@@ -37,11 +38,11 @@ export function CreateAuthorModal({
           name: initialValue.name,
           pictureUrl: initialValue.pictureUrl ?? "",
         });
-        // Determine source based on whether it's a data URL or regular URL
+        
         if (initialValue.pictureUrl?.startsWith("data:")) {
           setPictureSource("upload");
-          // For data URLs, we can't restore the file, so just show URL mode
-          // But if it's a data URL, keep it in upload mode
+          
+          
         } else {
           setPictureSource("url");
         }
@@ -57,7 +58,7 @@ export function CreateAuthorModal({
     try {
       const values = await form.validateFields();
       
-      // If using file upload, convert file to data URL
+      
       if (pictureSource === "upload" && fileList.length > 0) {
         const file = fileList[0].originFileObj;
         if (file) {
@@ -73,11 +74,11 @@ export function CreateAuthorModal({
       
       await onSubmit(values);
       onClose();
-      // Reset form state
+      
       setFileList([]);
       setPictureSource("url");
     } catch (err) {
-      // validation handled by AntD
+      
     }
   };
 
@@ -87,11 +88,11 @@ export function CreateAuthorModal({
       return;
     }
     
-    // Only allow one file
+    
     const newFileList = info.fileList.slice(-1);
     setFileList(newFileList);
     
-    // Clear URL field when file is selected
+    
     if (newFileList.length > 0) {
       form.setFieldValue("pictureUrl", "");
     }
@@ -108,14 +109,14 @@ export function CreateAuthorModal({
       message.error("Image must be smaller than 10MB!");
       return Upload.LIST_IGNORE;
     }
-    return false; // Prevent auto upload
+    return false; 
   };
 
-  const handleSourceChange = (e: any) => {
-    const newSource = e.target.value;
+  const handleSourceChange = (e: RadioChangeEvent) => {
+    const newSource = e.target.value as PictureSource;
     setPictureSource(newSource);
     
-    // Clear the other field when switching
+    
     if (newSource === "url") {
       setFileList([]);
     } else {
@@ -172,7 +173,7 @@ export function CreateAuthorModal({
                 {
                   validator: () => {
                     if (fileList.length === 0 && !form.getFieldValue("pictureUrl")) {
-                      return Promise.resolve(); // Optional field
+                      return Promise.resolve(); 
                     }
                     return Promise.resolve();
                   },
