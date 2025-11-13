@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Form, Input, InputNumber, Modal, Select } from "antd";
 import type { FormInstance } from "antd/es/form";
 import type { CreateBookModel, UpdateBookModel } from "../BookModel";
+import { PictureInput } from "../../shared/ui/PictureInput";
 
 type BookFormValues = CreateBookModel & {
   pictureUrl?: string;
@@ -107,11 +108,10 @@ export const CreateBookModal = ({
           />
         </Form.Item>
         <Form.Item
-          label="Cover URL"
+          label="Cover"
           name="pictureUrl"
-          rules={[{ type: "url", warningOnly: true, message: "Enter a valid URL" }]}
         >
-          <Input placeholder="https://…" />
+          <PictureInput />
         </Form.Item>
         <Form.Item label="Description" name="description">
           <Input.TextArea rows={3} placeholder="Short synopsis" />
