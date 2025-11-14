@@ -209,16 +209,19 @@ export const ClientDetailsPage = () => {
               onClick={() => setIsCreateSaleOpen(true)}
             >
               Record sale
+            </Button>
+            <Button
+              icon={<EditOutlined />}
+              onClick={() => {
+                form.setFieldsValue({
+                  firstName: client.firstName,
+                  lastName: client.lastName,
+                  email: client.email,
                   picture: client.pictureUrl,
-            <Button icon={<EditOutlined />} onClick={() => {
-              form.setFieldsValue({
-                firstName: client.firstName,
-                lastName: client.lastName,
-                email: client.email,
-                pictureUrl: client.pictureUrl,
-              });
-              setIsEditing(true);
-            }}>
+                });
+                setIsEditing(true);
+              }}
+            >
               Edit
             </Button>
             <Button icon={<DeleteOutlined />} danger onClick={handleDelete}>
