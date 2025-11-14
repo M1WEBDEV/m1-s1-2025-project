@@ -17,6 +17,7 @@ import {
   HeartOutlined,
   GlobalOutlined,
   RocketOutlined,
+  GithubOutlined,
 } from "@ant-design/icons";
 
 const { Title, Paragraph } = Typography;
@@ -287,6 +288,7 @@ function About() {
               fontSize: "clamp(16px, 2vw, 18px)",
               color: "#86868b",
               lineHeight: 1.8,
+              marginBottom: 64,
             }}
           >
             Whether you're running a small independent bookstore, managing a community
@@ -295,6 +297,107 @@ function About() {
             improvement and innovation, always listening to our users to make the
             platform better.
           </Paragraph>
+
+          <Divider style={{ margin: "64px 0" }} />
+
+          <Title level={3} style={{ fontSize: "clamp(24px, 3vw, 32px)", marginBottom: 40 }}>
+            Development Team
+          </Title>
+          <Space direction="vertical" size={24} style={{ width: "100%" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12 }}>
+              <div
+                style={{
+                  color: "#1d1d1f",
+                  fontSize: 20,
+                  fontWeight: 600,
+                }}
+              >
+                Borshon Alfred Gomes
+              </div>
+              <a
+                href="https://github.com/Borshon1017"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  color: "#667eea",
+                  fontSize: 24,
+                  transition: "color 0.2s",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = "#1d1d1f";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = "#667eea";
+                }}
+              >
+                <GithubOutlined />
+              </a>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12 }}>
+              <div
+                style={{
+                  color: "#1d1d1f",
+                  fontSize: 20,
+                  fontWeight: 600,
+                }}
+              >
+                Chiemerie Ekweanua
+              </div>
+              <a
+                href="https://github.com/davidekwe2"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  color: "#667eea",
+                  fontSize: 24,
+                  transition: "color 0.2s",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = "#1d1d1f";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = "#667eea";
+                }}
+              >
+                <GithubOutlined />
+              </a>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12 }}>
+              <div
+                style={{
+                  color: "#1d1d1f",
+                  fontSize: 20,
+                  fontWeight: 600,
+                }}
+              >
+                Delassie Efua Brempong
+              </div>
+              <a
+                href="https://github.com/delasssieee"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  color: "#667eea",
+                  fontSize: 24,
+                  transition: "color 0.2s",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = "#1d1d1f";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = "#667eea";
+                }}
+              >
+                <GithubOutlined />
+              </a>
+            </div>
+          </Space>
         </div>
       </section>
 
