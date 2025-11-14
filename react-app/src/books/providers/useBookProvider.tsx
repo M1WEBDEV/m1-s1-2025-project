@@ -10,6 +10,7 @@ import { http } from "../../shared/http";
 type BookResponse = BookModel & {
   author?: BookModel["author"];
   picture?: string; // Backend uses 'picture' field
+  clientCount?: number; // Backend returns 'clientCount' for sales
 };
 
 const normaliseBook = (book: BookResponse): BookModel => {
@@ -36,7 +37,7 @@ const normaliseBook = (book: BookResponse): BookModel => {
         author.fullName ?? [author.firstName, author.lastName].filter(Boolean).join(" "),
       pictureUrl: author.pictureUrl,
     },
-    salesCount: book.salesCount ?? 0,
+    salesCount: book.clientCount ?? book.salesCount ?? 0, // Map 'clientCount' to 'salesCount'
   };
 };
 

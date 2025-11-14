@@ -6,12 +6,24 @@ interface ListSalesParams {
   bookId?: string;
 }
 
-const normaliseSale = (sale: SaleModel): SaleModel => ({
-  ...sale,
-  id: String(sale.id),
-  clientId: String(sale.clientId),
-  bookId: String(sale.bookId),
-});
+const normaliseSale = (sale: any): SaleModel => {
+  // Ensure client has fullName if it exists
+  const client = sale.client
+    ? {
+        id: String(sale.client.id),
+        fullName: sale.client.fullName || 
+                  `${sale.client.firstName || ''} ${sale.client.lastName || ''}`.trim(),
+      }
+    : undefined;
+
+  return {
+    ...sale,
+    id: String(sale.id),
+    clientId: String(sale.clientId),
+    bookId: String(sale.bookId),
+    client,
+  };
+};
 
 export const listSales = async (params: ListSalesParams = {}) => {
   let response;
