@@ -209,7 +209,7 @@ export const ClientDetailsPage = () => {
               onClick={() => setIsCreateSaleOpen(true)}
             >
               Record sale
-            </Button>
+                  picture: client.pictureUrl,
             <Button icon={<EditOutlined />} onClick={() => {
               form.setFieldsValue({
                 firstName: client.firstName,
@@ -284,7 +284,7 @@ export const ClientDetailsPage = () => {
             firstName: client.firstName,
             lastName: client.lastName,
             email: client.email,
-            pictureUrl: client.pictureUrl,
+            picture: client.pictureUrl,
           }}
         />
       </Modal>

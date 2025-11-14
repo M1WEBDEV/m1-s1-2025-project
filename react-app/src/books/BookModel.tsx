@@ -18,7 +18,7 @@ export interface CreateBookModel {
   authorId: string;
   title: string;
   yearPublished: number;
-  pictureUrl?: string;
+  picture?: string;
   description?: string;
 }
 

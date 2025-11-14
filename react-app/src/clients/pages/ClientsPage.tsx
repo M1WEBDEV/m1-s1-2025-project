@@ -16,6 +16,7 @@ export const ClientsPage = () => {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [editingClient, setEditingClient] = useState<ClientModel | null>(null);
   const [form] = useClientForm();
+  const [clientUploading, setClientUploading] = useState(false);
   const navigate = useNavigate();
 
   const filteredClients = useMemo(() => {
@@ -72,7 +73,7 @@ export const ClientsPage = () => {
                 firstName: record.firstName,
                 lastName: record.lastName,
                 email: record.email,
-                pictureUrl: record.pictureUrl,
+                picture: record.pictureUrl,
               });
             }}
           >
@@ -245,8 +246,10 @@ export const ClientsPage = () => {
           form.resetFields();
         }}
         onOk={() => void handleCreate()}
+        okButtonProps={{ disabled: clientUploading }}
+        confirmLoading={clientUploading}
       >
-        <ClientForm form={form} />
+        <ClientForm form={form} onUploadingChange={setClientUploading} />
       </Modal>
 
       <Modal
@@ -259,6 +262,8 @@ export const ClientsPage = () => {
           form.resetFields();
         }}
         onOk={() => void handleUpdate()}
+        okButtonProps={{ disabled: clientUploading }}
+        confirmLoading={clientUploading}
       >
         <ClientForm
           form={form}
@@ -268,10 +273,11 @@ export const ClientsPage = () => {
                   firstName: editingClient.firstName,
                   lastName: editingClient.lastName,
                   email: editingClient.email,
-                  pictureUrl: editingClient.pictureUrl,
+                  picture: editingClient.pictureUrl,
                 }
               : undefined
           }
+          onUploadingChange={setClientUploading}
         />
       </Modal>
     </div>

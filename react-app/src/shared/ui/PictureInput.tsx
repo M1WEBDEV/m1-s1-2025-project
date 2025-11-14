@@ -2,17 +2,20 @@ import { useState, useEffect } from "react";
 import { Input, Upload, Radio, Space } from "antd";
 import type { UploadFile, UploadProps } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
+import { http } from "../http";
 
 type PictureInputMode = "url" | "file";
 
 interface PictureInputProps {
   value?: string;
   onChange?: (value: string | undefined) => void;
+  onUploadingChange?: (uploading: boolean) => void;
 }
 
 export function PictureInput({
   value,
   onChange,
+  onUploadingChange,
 }: PictureInputProps) {
   const [mode, setMode] = useState<PictureInputMode>("url");
   const [fileList, setFileList] = useState<UploadFile[]>([]);
@@ -60,19 +63,17 @@ export function PictureInput({
       return;
     }
 
-    const file = newFileList[0].originFileObj;
+    const file = newFileList[0].originFileObj as File | undefined;
     if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const result = e.target?.result as string;
-        if (result) {
-          onChange?.(result);
-        }
-      };
-      reader.onerror = () => {
-        onChange?.(undefined);
-      };
-      reader.readAsDataURL(file);
+      onUploadingChange?.(true);
+      http
+        .upload('/upload', file)
+        .then((res: any) => {
+          if (res && res.url) onChange?.(res.url);
+          else onChange?.(undefined);
+        })
+        .catch(() => onChange?.(undefined))
+        .finally(() => onUploadingChange?.(false));
     }
   };
 

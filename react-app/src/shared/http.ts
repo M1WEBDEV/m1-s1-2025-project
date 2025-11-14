@@ -75,6 +75,22 @@ export const http = {
   patch: <TResponse, TBody = unknown>(path: string, body?: TBody) =>
     request<TResponse, TBody>("PATCH", path, { body }),
   delete: <TResponse>(path: string) => request<TResponse>("DELETE", path),
+  upload: async (path: string, file: File) => {
+    const baseUrl = ensureApiUrl();
+    const url = path.startsWith('http') ? path : `${baseUrl}${path}`;
+    const fd = new FormData();
+    fd.append('file', file, file.name);
+    const res = await fetch(url, { method: 'POST', body: fd });
+    if (!res.ok) {
+      const text = await res.text().catch(() => null);
+      throw new Error(text ?? `${res.status} ${res.statusText}`);
+    }
+    const payload = await res.json().catch(() => null);
+    if (payload && typeof payload.url === 'string') {
+      return { url: payload.url.startsWith('/') ? `${baseUrl}${payload.url}` : payload.url };
+    }
+    return payload;
+  },
 };
 
 

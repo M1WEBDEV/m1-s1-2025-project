@@ -6,12 +6,12 @@ export interface Author {
 
 export interface CreateAuthor {
   name: string;
-  pictureUrl?: string;
+  picture?: string;
 }
 
 export interface UpdateAuthor {
   name?: string;
-  pictureUrl?: string;
+  picture?: string;
 }
 
 export interface AuthorWithStats extends Author {

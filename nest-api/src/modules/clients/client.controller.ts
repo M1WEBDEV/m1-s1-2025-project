@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Put,
-  Delete,
-  Param,
-  Body,
-} from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Param, Body } from '@nestjs/common';
 import { ClientService } from './client.service';
 import { CreateClientDto } from './create-client.dto';
 import { ClientModel } from './models/client.model';
@@ -17,6 +9,9 @@ export class ClientController {
 
   @Post()
   create(@Body() createClientDto: CreateClientDto): Promise<ClientModel> {
+    if (!createClientDto.picture && (createClientDto as any).pictureUrl) {
+      createClientDto.picture = (createClientDto as any).pictureUrl;
+    }
     return this.clientService.create(createClientDto);
   }
 
@@ -40,8 +35,11 @@ export class ClientController {
     return this.clientService.findBooksBoughtByClient(Number(id));
   }
 
-  @Put(':id')
+  @Patch(':id')
   update(@Param('id') id: string, @Body() updateClientDto: CreateClientDto): Promise<ClientModel> {
+    if (!updateClientDto.picture && (updateClientDto as any).pictureUrl) {
+      updateClientDto.picture = (updateClientDto as any).pictureUrl;
+    }
     return this.clientService.update(id, updateClientDto);
   }
 

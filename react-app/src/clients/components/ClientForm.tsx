@@ -7,9 +7,10 @@ import { PictureInput } from "../../shared/ui/PictureInput";
 interface ClientFormProps {
   form: FormInstance<CreateClientModel>;
   initialValues?: Partial<CreateClientModel>;
+  onUploadingChange?: (uploading: boolean) => void;
 }
 
-export const ClientForm = ({ form, initialValues }: ClientFormProps) => {
+export const ClientForm = ({ form, initialValues, onUploadingChange }: ClientFormProps) => {
   useEffect(() => {
     if (initialValues) {
       form.setFieldsValue(initialValues);
@@ -43,9 +44,9 @@ export const ClientForm = ({ form, initialValues }: ClientFormProps) => {
       </Form.Item>
       <Form.Item
         label="Avatar"
-        name="pictureUrl"
+        name="picture"
       >
-        <PictureInput />
+        <PictureInput onUploadingChange={onUploadingChange} />
       </Form.Item>
     </Form>
   );

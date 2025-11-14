@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Patch,
-  Post,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { AuthorService } from './author.service';
 import { CreateAuthorDto, UpdateAuthorDto } from './author.dto';
 import { AuthorModel, AuthorWithStats } from './author.model';
@@ -21,10 +13,13 @@ export class AuthorController {
   }
 
   @Post()
-  public async createAuthor(
-    @Body() createAuthorDto: CreateAuthorDto,
-  ): Promise<AuthorModel> {
-    return this.authorService.createAuthor(createAuthorDto);
+  public async createAuthor(@Body() createAuthorDto: CreateAuthorDto): Promise<AuthorModel> {
+    const name = createAuthorDto.name ?? '';
+    const parts = name.trim() ? name.trim().split(/\s+/) : [];
+    const firstName = createAuthorDto.firstName ?? parts[0] ?? '';
+    const lastName = createAuthorDto.lastName ?? parts.slice(1).join(' ') ?? '';
+    const picture = createAuthorDto.picture ?? createAuthorDto.pictureUrl;
+    return this.authorService.createAuthor({ firstName, lastName, picture });
   }
 
   @Get(':id')
@@ -33,11 +28,17 @@ export class AuthorController {
   }
 
   @Patch(':id')
-  public async updateAuthor(
-    @Param('id') id: string,
-    @Body() updateDto: UpdateAuthorDto,
-  ): Promise<AuthorModel> {
-    return this.authorService.updateAuthor(id, updateDto);
+  public async updateAuthor(@Param('id') id: string, @Body() updateDto: UpdateAuthorDto): Promise<AuthorModel> {
+    const name = updateDto.name ?? '';
+    const parts = name.trim() ? name.trim().split(/\s+/) : [];
+    const patch: Partial<AuthorModel> = {};
+    if (updateDto.firstName) patch.firstName = updateDto.firstName;
+    else if (parts[0]) patch.firstName = parts[0];
+    if (updateDto.lastName) patch.lastName = updateDto.lastName;
+    else if (parts.length > 1) patch.lastName = parts.slice(1).join(' ');
+    if (updateDto.picture) patch.picture = updateDto.picture;
+    if (updateDto.pictureUrl) patch.picture = updateDto.pictureUrl;
+    return this.authorService.updateAuthor(id, patch);
   }
 
   @Delete(':id')

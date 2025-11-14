@@ -1,13 +1,10 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Form, Input, InputNumber, Modal, Select } from "antd";
 import type { FormInstance } from "antd/es/form";
 import type { CreateBookModel, UpdateBookModel } from "../BookModel";
 import { PictureInput } from "../../shared/ui/PictureInput";
 
-type BookFormValues = CreateBookModel & {
-  pictureUrl?: string;
-  description?: string;
-};
+type BookFormValues = CreateBookModel;
 
 export interface CreateBookModalProps {
   open: boolean;
@@ -28,7 +25,7 @@ const setFormValues = (
       title: values.title,
       authorId: values.authorId,
       yearPublished: values.yearPublished,
-      pictureUrl: values.pictureUrl,
+      picture: values.picture,
       description: values.description,
     });
   } else {
@@ -46,6 +43,7 @@ export const CreateBookModal = ({
   loading,
 }: CreateBookModalProps) => {
   const [form] = Form.useForm<BookFormValues>();
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     if (open) {
@@ -71,7 +69,8 @@ export const CreateBookModal = ({
       onOk={() => {
         void handleSubmit();
       }}
-      confirmLoading={loading}
+      okButtonProps={{ disabled: uploading }}
+      confirmLoading={loading || uploading}
       destroyOnClose
     >
       <Form form={form} layout="vertical">
@@ -109,9 +108,9 @@ export const CreateBookModal = ({
         </Form.Item>
         <Form.Item
           label="Cover"
-          name="pictureUrl"
+          name="picture"
         >
-          <PictureInput />
+          <PictureInput onUploadingChange={setUploading} />
         </Form.Item>
         <Form.Item label="Description" name="description">
           <Input.TextArea rows={3} placeholder="Short synopsis" />

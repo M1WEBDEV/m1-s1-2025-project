@@ -11,14 +11,14 @@ export interface CreateClientModel {
   firstName: string;
   lastName: string;
   email?: string;
-  pictureUrl?: string;
+  picture?: string;
 }
 
 export interface UpdateClientModel {
   firstName?: string;
   lastName?: string;
   email?: string;
-  pictureUrl?: string;
+  picture?: string;
 }
 
 

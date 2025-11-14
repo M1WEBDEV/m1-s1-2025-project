@@ -1,11 +1,11 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Modal, Form, Input } from "antd";
 import type { Author } from "../AuthorModel";
 import { PictureInput } from "../../shared/ui/PictureInput";
 
 export interface CreateAuthorInput {
   name: string;
-  pictureUrl?: string;
+  picture?: string;
 }
 
 interface CreateAuthorModalProps {
@@ -24,13 +24,14 @@ export function CreateAuthorModal({
   loading,
 }: CreateAuthorModalProps) {
   const [form] = Form.useForm<CreateAuthorInput>();
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     if (open) {
       if (initialValue) {
         form.setFieldsValue({
           name: initialValue.name,
-          pictureUrl: initialValue.pictureUrl ?? "",
+          picture: initialValue.pictureUrl ?? "",
         });
       } else {
         form.resetFields();
@@ -55,7 +56,8 @@ export function CreateAuthorModal({
       onOk={handleOk}
       onCancel={onClose}
       okText={initialValue ? "Save changes" : "Create"}
-      confirmLoading={loading}
+      okButtonProps={{ disabled: uploading }}
+      confirmLoading={loading || uploading}
     >
       <Form<CreateAuthorInput> layout="vertical" form={form}>
         <Form.Item
@@ -63,14 +65,14 @@ export function CreateAuthorModal({
           name="name"
           rules={[{ required: true, message: "Author name is required" }]}
         >
-          <Input />
+          <Input placeholder="e.g. Frank Herbert" />
         </Form.Item>
 
         <Form.Item
           label="Picture"
-          name="pictureUrl"
+          name="picture"
         >
-          <PictureInput />
+          <PictureInput onUploadingChange={setUploading} />
         </Form.Item>
       </Form>
     </Modal>

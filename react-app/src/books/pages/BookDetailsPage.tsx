@@ -265,7 +265,7 @@ export const BookDetailsContent = ({ bookId }: BookDetailsContentProps) => {
           title: book.title,
           authorId: book.author.id,
           yearPublished: book.yearPublished,
-          pictureUrl: book.pictureUrl,
+          picture: book.pictureUrl,
           description: book.description,
         }}
         onClose={() => setIsEditOpen(false)}

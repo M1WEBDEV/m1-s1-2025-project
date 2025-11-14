@@ -57,7 +57,7 @@ export function AuthorDetailsPage() {
     });
   };
 
-  const handleEdit = async (values: { name: string; pictureUrl?: string }) => {
+  const handleEdit = async (values: { name: string; picture?: string }) => {
     await updateAuthor(String(author.id), values);
     await refresh();
     setIsEditing(false);

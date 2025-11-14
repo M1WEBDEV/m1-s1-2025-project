@@ -9,6 +9,7 @@ import { http } from "../../shared/http";
 
 type BookResponse = BookModel & {
   author?: BookModel["author"];
+  picture?: string; // Backend uses 'picture' field
 };
 
 const normaliseBook = (book: BookResponse): BookModel => {
@@ -25,7 +26,7 @@ const normaliseBook = (book: BookResponse): BookModel => {
     id: String(book.id),
     title: book.title ?? "",
     yearPublished: book.yearPublished ?? 0,
-    pictureUrl: book.pictureUrl,
+    pictureUrl: book.picture ?? book.pictureUrl, // Map 'picture' from backend to 'pictureUrl'
     description: book.description,
     author: {
       id: author.id ? String(author.id) : "",

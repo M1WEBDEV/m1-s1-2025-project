@@ -7,17 +7,56 @@ import type {
 } from "../AuthorModel";
 import { http } from "../../shared/http";
 
-type AuthorResponse = AuthorWithStats | Omit<AuthorWithStats, "averageSales"> & {
+type ServerAuthor = {
+  id: number | string;
+  name?: string;
+  firstName?: string;
+  lastName?: string;
+  picture?: string;
+  pictureUrl?: string;
+  booksCount?: number;
+  averageSales?: number;
   avgSales?: number;
+  books?: Array<{
+    id: number | string;
+    title?: string;
+    yearPublished?: number;
+    picture?: string;
+    pictureUrl?: string;
+  }>;
 };
 
-const normaliseAuthor = (author: AuthorResponse): AuthorWithStats => ({
-  ...author,
-  averageSales:
-    "averageSales" in author
-      ? author.averageSales
-      : author.avgSales ?? 0,
-});
+const normaliseAuthor = (author: ServerAuthor): AuthorWithStats => {
+  const fallbackName = `${author.firstName ?? ""} ${author.lastName ?? ""}`.trim();
+  const name = (author.name ?? fallbackName).trim() || "Unnamed author";
+  const books = (author.books ?? []).map((book) => ({
+    id: String(book.id),
+    title: book.title ?? "Untitled",
+    yearPublished: Number(book.yearPublished ?? 0),
+    pictureUrl: book.picture ?? book.pictureUrl ?? undefined,
+  }));
+
+  return {
+    id: String(author.id),
+    name,
+    pictureUrl: author.picture ?? author.pictureUrl ?? undefined,
+    booksCount: Number(author.booksCount ?? books.length ?? 0),
+    averageSales: Number(author.averageSales ?? author.avgSales ?? 0),
+    books,
+  };
+};
+
+const prepareAuthorPayload = <T extends { picture?: string }>(input: T) => {
+  const payload = { ...input } as T & { pictureUrl?: string };
+  if (!payload.picture && payload.pictureUrl) {
+    payload.picture = payload.pictureUrl;
+  }
+  delete payload.pictureUrl;
+  if (payload.picture === "") {
+    delete payload.picture;
+  }
+  return payload;
+};
 
 export const useAuthorsProvider = () => {
   const [authors, setAuthors] = useState<AuthorWithStats[]>([]);
@@ -28,7 +67,7 @@ export const useAuthorsProvider = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await http.get<AuthorResponse[] | { data: AuthorResponse[] }>(
+      const response = await http.get<ServerAuthor[] | { data: ServerAuthor[] }>(
         "/authors",
       );
       const list = Array.isArray(response)
@@ -48,7 +87,7 @@ export const useAuthorsProvider = () => {
     async (author: CreateAuthor) => {
       const hide = message.loading("Creating author…");
       try {
-        await http.post<AuthorResponse>("/authors", author);
+        await http.post<ServerAuthor>("/authors", prepareAuthorPayload(author));
         hide();
         message.success("Author created");
         loadAuthors();
@@ -65,7 +104,7 @@ export const useAuthorsProvider = () => {
     async (id: string, input: UpdateAuthor) => {
       const hide = message.loading("Updating author…");
       try {
-        await http.patch<AuthorResponse>(`/authors/${id}`, input);
+        await http.patch<ServerAuthor>(`/authors/${id}`, prepareAuthorPayload(input));
         hide();
         message.success("Author updated");
         loadAuthors();

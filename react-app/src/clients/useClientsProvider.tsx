@@ -27,9 +27,24 @@ interface ClientsContextValue {
 
 const ClientsContext = createContext<ClientsContextValue | undefined>(undefined);
 
-const normaliseClient = (client: ClientModel): ClientModel => ({
-  ...client,
+type ServerClient = {
+  id: number | string;
+  firstName: string;
+  lastName: string;
+  email?: string;
+  picture?: string;
+  pictureUrl?: string;
+  booksCount?: number;
+  salesCount?: number;
+};
+
+const normaliseClient = (client: ServerClient): ClientModel => ({
   id: String(client.id),
+  firstName: client.firstName,
+  lastName: client.lastName,
+  email: client.email,
+  pictureUrl: client.picture ?? client.pictureUrl,
+  salesCount: client.booksCount ?? client.salesCount ?? 0,
 });
 
 export const ClientsProvider = ({ children }: { children: React.ReactNode }) => {
@@ -41,33 +56,11 @@ export const ClientsProvider = ({ children }: { children: React.ReactNode }) => 
     setLoading(true);
     setError(null);
     try {
-      
-      type ServerClient = {
-        id: number | string;
-        firstName: string;
-        lastName: string;
-        email?: string;
-        picture?: string;
-        pictureUrl?: string;
-        booksCount?: number;
-        salesCount?: number;
-      };
-
       const response = await http.get<ServerClient[] | { data: ServerClient[] }>(
         "/clients/with-client-count",
       );
       const list = Array.isArray(response) ? response : response?.data ?? [];
-
-      const mapped = list.map((c: ServerClient) => ({
-        id: String(c.id),
-        firstName: c.firstName,
-        lastName: c.lastName,
-        email: c.email,
-        pictureUrl: c.picture ?? c.pictureUrl,
-        salesCount: c.booksCount ?? c.salesCount ?? 0,
-      }));
-
-      setClients(mapped.map(normaliseClient));
+      setClients(list.map(normaliseClient));
     } catch (err) {
       const messageText =
         err instanceof Error ? err.message : "Failed to load clients";
@@ -86,7 +79,18 @@ export const ClientsProvider = ({ children }: { children: React.ReactNode }) => 
     async (input: CreateClientModel) => {
       const hide = message.loading("Creating client…");
       try {
-        const created = await http.post<ClientModel>("/clients", input);
+        const payload: CreateClientModel & { pictureUrl?: string } = {
+          ...input,
+        };
+        if (!payload.picture && payload.pictureUrl) {
+          payload.picture = payload.pictureUrl;
+        }
+        delete payload.pictureUrl;
+        if (payload.picture === "") {
+          delete payload.picture;
+        }
+
+        const created = await http.post<ServerClient>("/clients", payload);
         setClients((prev) => [normaliseClient(created), ...prev]);
         hide();
         message.success("Client created");
@@ -105,7 +109,18 @@ export const ClientsProvider = ({ children }: { children: React.ReactNode }) => 
     async (id: string, input: UpdateClientModel) => {
       const hide = message.loading("Updating client…");
       try {
-        const updated = await http.patch<ClientModel>(`/clients/${id}`, input);
+        const payload: UpdateClientModel & { pictureUrl?: string } = {
+          ...input,
+        };
+        if (!payload.picture && payload.pictureUrl) {
+          payload.picture = payload.pictureUrl;
+        }
+        delete payload.pictureUrl;
+        if (payload.picture === "") {
+          delete payload.picture;
+        }
+
+        const updated = await http.patch<ServerClient>(`/clients/${id}`, payload);
         setClients((prev) =>
           prev.map((client) =>
             client.id === id ? { ...client, ...normaliseClient(updated) } : client,
