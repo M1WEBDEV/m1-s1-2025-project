@@ -31,7 +31,7 @@ export const BookListItem = ({ book, onEdit, onDelete }: BookListItemProps) => {
           key="edit"
           type="link"
           icon={<EditOutlined />}
-          onClick={() => onEdit(book)}
+          onClick={(e) => { e.stopPropagation(); onEdit(book); }}
         >
           Edit
         </Button>,
@@ -40,7 +40,7 @@ export const BookListItem = ({ book, onEdit, onDelete }: BookListItemProps) => {
           type="link"
           danger
           icon={<DeleteOutlined />}
-          onClick={() => onDelete(book.id)}
+          onClick={(e) => { e.stopPropagation(); onDelete(book.id); }}
         >
           Delete
         </Button>,

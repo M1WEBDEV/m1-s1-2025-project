@@ -8,12 +8,12 @@ import {
   Typography,
   Card,
   type TablePaginationConfig,
+  Popconfirm,
 } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import { PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined, EditOutlined, DeleteOutlined, EyeOutlined } from "@ant-design/icons";
 import { useNavigate } from "@tanstack/react-router";
 import { useBookProvider } from "../providers/useBookProvider";
-import { BookListItem } from "./BookListItem";
 import { CreateBookModal } from "./CreateBookModal";
 import { useBookAuthorsProviders } from "../providers/useBookAuthorsProviders";
 import type { BookModel, CreateBookModel, UpdateBookModel } from "../BookModel";
@@ -49,13 +49,8 @@ export function BookList() {
     void loadAuthors();
   };
 
-  const handleDelete = (bookId: string, title: string) => {
-    Modal.confirm({
-      title: `Delete "${title}"?`,
-      okText: "Delete",
-      okButtonProps: { danger: true },
-      onOk: () => deleteBook(bookId),
-    });
+  const handleDelete = async (bookId: string) => {
+    await deleteBook(bookId);
   };
 
   const authorOptions = useMemo(
@@ -136,15 +131,39 @@ export function BookList() {
     {
       title: "Actions",
       key: "actions",
-      width: 200,
+      width: 220,
       render: (_, record) => (
-        <Space>
-          <Button type="link" onClick={() => handleOpenEdit(record)}>
+        <Space size="small">
+          <Button 
+            type="link" 
+            icon={<EyeOutlined />}
+            onClick={() => navigate({ to: "/books/$bookId", params: { bookId: record.id } })}
+          >
+            View
+          </Button>
+          <Button 
+            type="link" 
+            icon={<EditOutlined />}
+            onClick={() => handleOpenEdit(record)}
+          >
             Edit
           </Button>
-          <Button type="link" danger onClick={() => handleDelete(record.id, record.title)}>
-            Delete
-          </Button>
+          <Popconfirm
+            title="Delete book"
+            description={`Are you sure you want to delete "${record.title}"?`}
+            onConfirm={() => handleDelete(record.id)}
+            okText="Delete"
+            cancelText="Cancel"
+            okButtonProps={{ danger: true }}
+          >
+            <Button 
+              type="link" 
+              danger
+              icon={<DeleteOutlined />}
+            >
+              Delete
+            </Button>
+          </Popconfirm>
         </Space>
       ),
     },
@@ -216,24 +235,6 @@ export function BookList() {
             columns={columns}
             dataSource={filteredBooks}
             pagination={pagination}
-            onRow={(record) => ({
-              onClick: () =>
-                navigate({
-                  to: "/books/$bookId",
-                  params: { bookId: record.id },
-                }),
-              style: { cursor: "pointer" },
-            })}
-            expandable={{
-              expandedRowRender: (record) => (
-                <BookListItem
-                  book={record}
-                  onEdit={handleOpenEdit}
-                  onDelete={(id) => handleDelete(id, record.title)}
-                />
-              ),
-              expandRowByClick: true,
-            }}
             style={{
               borderRadius: 12,
               overflow: "hidden",

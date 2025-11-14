@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import {
   Table,
   Button,
-  Modal,
+  Popconfirm,
   Space,
   Input,
   Typography,
@@ -10,6 +10,7 @@ import {
   type TablePaginationConfig,
 } from "antd";
 import type { ColumnsType } from "antd/es/table";
+import { EyeOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useNavigate } from "@tanstack/react-router";
 import { useAuthorsProvider } from "../providers/useAuthorsProvider";
 import type { Author, AuthorWithStats } from "../AuthorModel";
@@ -44,6 +45,10 @@ export function AuthorsPage() {
     setEditOpen(true);
   };
 
+  const handleDelete = async (authorId: string) => {
+    await deleteAuthor(authorId);
+  };
+
   const filteredAuthors = useMemo(() => {
     if (!search) return authors;
     const term = search.toLowerCase();
@@ -58,8 +63,7 @@ export function AuthorsPage() {
       render: (_text, record) => (
         <Space>
           <AvatarImg name={record.name} src={record.pictureUrl} size="large" />
-          <Button
-            type="link"
+          <Typography.Link
             onClick={() =>
               navigate({
                 to: authorDetailsRoute.to,
@@ -68,7 +72,7 @@ export function AuthorsPage() {
             }
           >
             {record.name}
-          </Button>
+          </Typography.Link>
         </Space>
       ),
       sorter: (a, b) => a.name.localeCompare(b.name),
@@ -91,25 +95,44 @@ export function AuthorsPage() {
     {
       title: "Actions",
       key: "actions",
+      width: 220,
       render: (_, record) => (
-        <Space>
-          <Button type="link" onClick={() => handleOpenEdit(record)}>
-            Edit
-          </Button>
-          <Button
-            danger
-            type="link"
+        <Space size="small">
+          <Button 
+            type="link" 
+            icon={<EyeOutlined />}
             onClick={() =>
-              Modal.confirm({
-                title: `Delete ${record.name}?`,
-                okText: "Delete",
-                okButtonProps: { danger: true },
-                onOk: () => deleteAuthor(String(record.id)),
+              navigate({
+                to: authorDetailsRoute.to,
+                params: { authorId: String(record.id) },
               })
             }
           >
-            Delete
+            View
           </Button>
+          <Button 
+            type="link" 
+            icon={<EditOutlined />}
+            onClick={() => handleOpenEdit(record)}
+          >
+            Edit
+          </Button>
+          <Popconfirm
+            title="Delete author"
+            description={`Are you sure you want to delete "${record.name}"?`}
+            onConfirm={() => handleDelete(String(record.id))}
+            okText="Delete"
+            cancelText="Cancel"
+            okButtonProps={{ danger: true }}
+          >
+            <Button 
+              type="link" 
+              danger
+              icon={<DeleteOutlined />}
+            >
+              Delete
+            </Button>
+          </Popconfirm>
         </Space>
       ),
     },

@@ -12,6 +12,9 @@ import { SaleEntity } from '../sales/entities/sale.entity';
       database: 'db',
       entities: [AuthorEntity, BookEntity, ClientEntity, SaleEntity],
       synchronize: true,
+      extra: {
+        foreign_keys: 'ON',
+      },
     }),
   ],
 })

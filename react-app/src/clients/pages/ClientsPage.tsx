@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
-import { Button, Input, Modal, Space, Table, Typography, Card, type TablePaginationConfig } from "antd";
+import { Button, Input, Modal, Popconfirm, Space, Table, Typography, Card, type TablePaginationConfig } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import { PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined, EyeOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useNavigate } from "@tanstack/react-router";
 import { useClientsProvider } from "../useClientsProvider";
 import type { ClientModel } from "../ClientModel";
@@ -61,43 +61,57 @@ export const ClientsPage = () => {
     {
       title: "Actions",
       key: "actions",
-      width: 180,
-      render: (_, record) => (
-        <Space>
-          <Button
-            type="link"
-            onClick={(event) => {
-              event.stopPropagation();
-              setEditingClient(record);
-              form.setFieldsValue({
-                firstName: record.firstName,
-                lastName: record.lastName,
-                email: record.email,
-                picture: record.pictureUrl,
-              });
-            }}
-          >
-            Edit
-          </Button>
-          <Button
-            danger
-            type="link"
-            onClick={(event) => {
-              event.stopPropagation();
-              Modal.confirm({
-                title: `Delete ${record.firstName}?`,
-                content:
-                  "This will remove the client and any associated sales records.",
-                okText: "Delete",
-                okButtonProps: { danger: true },
-                onOk: () => removeClient(record.id),
-              });
-            }}
-          >
-            Delete
-          </Button>
-        </Space>
-      ),
+      width: 220,
+      render: (_, record) => {
+        const fullName = `${record.firstName} ${record.lastName}`.trim();
+        return (
+          <Space size="small">
+            <Button
+              type="link"
+              icon={<EyeOutlined />}
+              onClick={() =>
+                navigate({
+                  to: "/clients/$clientId",
+                  params: { clientId: record.id },
+                })
+              }
+            >
+              View
+            </Button>
+            <Button
+              type="link"
+              icon={<EditOutlined />}
+              onClick={() => {
+                setEditingClient(record);
+                form.setFieldsValue({
+                  firstName: record.firstName,
+                  lastName: record.lastName,
+                  email: record.email,
+                  picture: record.pictureUrl,
+                });
+              }}
+            >
+              Edit
+            </Button>
+            <Popconfirm
+              title="Delete client"
+              description={`Are you sure you want to delete "${fullName}"? This will remove the client and any associated sales records.`}
+              onConfirm={() => handleDelete(record.id)}
+              okText="Delete"
+              cancelText="Cancel"
+              okButtonProps={{ danger: true }}
+            >
+              <Button
+                type="link"
+                danger
+                icon={<DeleteOutlined />}
+              >
+                Delete
+              </Button>
+            </Popconfirm>
+          </Space>
+        );
+      },
     },
   ];
 
@@ -114,6 +128,10 @@ export const ClientsPage = () => {
     await updateClient(editingClient.id, values);
     setEditingClient(null);
     form.resetFields();
+  };
+
+  const handleDelete = async (clientId: string) => {
+    await removeClient(clientId);
   };
 
   const pagination: TablePaginationConfig = {
@@ -204,14 +222,6 @@ export const ClientsPage = () => {
               columns={columns}
               dataSource={filteredClients}
               pagination={pagination}
-              onRow={(record) => ({
-                onClick: () =>
-                  navigate({
-                    to: "/clients/$clientId",
-                    params: { clientId: record.id },
-                  }),
-                style: { cursor: "pointer" },
-              })}
               style={{
                 borderRadius: 12,
                 overflow: "hidden",
