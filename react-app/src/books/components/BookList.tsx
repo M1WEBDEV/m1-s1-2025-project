@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import {
+  Avatar,
   Button,
   Input,
   Modal,
@@ -80,9 +81,20 @@ export function BookList() {
       title: "",
       dataIndex: "pictureUrl",
       key: "pictureUrl",
-      width: 72,
+      width: 80,
       render: (value, record) => (
-        <AvatarImg name={record.title} src={value} size="large" />
+        <Avatar
+          src={value ?? undefined}
+          shape="square"
+          size={64}
+          style={{
+            backgroundColor: "#d9d9d9",
+            color: "#1f1f1f",
+            fontWeight: 600,
+          }}
+        >
+          {record.title.charAt(0).toUpperCase()}
+        </Avatar>
       ),
     },
     {
